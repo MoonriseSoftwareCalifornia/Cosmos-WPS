@@ -1,4 +1,4 @@
-# Software License Agreement
+# GNU GENERAL PUBLIC LICENSE  Version 3
 
 **Cosmos WPS** – https://github.com/MoonriseSoftwareCalifornia/Cosmos-WPS <br>
 Copyright (c) 2022 - present, [Moonrise Software LLC](https://www.moonrise.net) All rights reserved.
