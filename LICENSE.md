@@ -1,4 +1,4 @@
-# Software License Agreement - Addendum
+# Software License Agreement
 
 **Cosmos WPS** – https://github.com/MoonriseSoftwareCalifornia/Cosmos-WPS <br>
 Copyright (c) 2022 - present, [Moonrise Software LLC](https://www.moonrise.net) All rights reserved.
