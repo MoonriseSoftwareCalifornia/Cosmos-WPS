@@ -48,3 +48,7 @@ For administrators:
 ## Questions? Ideas?
 
 Please post to our new [discussion board](https://github.com/MoonriseSoftwareCalifornia/Cosmos/discussions) if you have any questions or suggestions.
+
+## License
+
+Cosmos WPS is licensed under [GPL-v3](LICENSE.txt) and a [Software License Agreement]{SLA.md} that lists intellectual property included in Cosmos WPS.
