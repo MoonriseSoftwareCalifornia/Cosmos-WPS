@@ -51,4 +51,4 @@ Please post to our new [discussion board](https://github.com/MoonriseSoftwareCal
 
 ## License
 
-Cosmos WPS is licensed under [GPL-v3](LICENSE.txt) and a [Software License Agreement]{SLA.md} that lists intellectual property included in Cosmos WPS.
+Cosmos WPS is licensed under [GPL-v3](LICENSE.txt) and a [Software License Agreement](SLA.md) that lists intellectual property included in Cosmos WPS.
