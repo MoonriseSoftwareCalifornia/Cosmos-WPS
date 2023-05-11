@@ -1,0 +1,189 @@
+﻿@model Cosmos.Common.Models.ArticleViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = Model.Title;
+}
+<!DOCTYPE HTML>
+<html lang="@Model.LanguageCode">
+<head>
+    <title>@Model.Title</title>
+    <meta name="cwps-meta-path-title" content="@Model.Title" />
+    <meta name="cwps-meta-path-url" content="@Model.UrlPath" />
+    <meta name="cwps-meta-path-updated" content="@Model.Updated" />
+    <style>
+        figure.media {
+            width: 640px;
+        }
+    </style>
+    @Html.Raw(Model.Layout.Head)
+    @*
+    Page specific header
+    *@
+    @Html.Raw(Model.HeadJavaScript)
+    @*
+    Application Insights Scripts
+    *@
+    @Html.Raw(JavaScriptSnippet.FullScript)
+</head>
+<body>
+    @Html.Raw(Model.Layout.HtmlHeader)
+    <div ccms-content-id="@Model.Id">
+        @Html.Raw(Model.Content)
+    </div>
+    @Html.Raw(Model.Layout.FooterHtmlContent)
+    @*
+    Page specific
+    *@
+    @Html.Raw(Model.FooterJavaScript)
+
+    <script src="/lib/ckeditor/build_20230505.01/ckeditor.js"></script>
+    <script>
+
+        // Create editors
+        var ccms_editors = [];
+        var ccms_editorIds = [];
+        var unmoutCkBox;
+        const { BalloonEditor: Editor, EditorWatchdog } = BalloonEditor;
+        const watchdog = new EditorWatchdog(Editor); // Utility that restores crashed editors
+        let autosaveTimeout = null;
+
+        document.addEventListener("DOMContentLoaded", function (event) {
+            ccms_createEditors();
+        });
+
+        document.addEventListener('progress', (event) => {
+            var debugval = event;
+        });
+
+        function ccms_createEditors() {
+
+            // Editor instances
+            const inlineInjectElements = document.querySelectorAll('[data-ccms-ceid]');
+
+            // Editor configuration
+            const config = {
+                toolbar: {},
+                licenseKey: '',
+                autosave: {
+                    save(editor) {
+                        return parent.cosmosSignalOthers(editor, "save");
+                    },
+                    waitingTime: 1500
+                },
+                simpleUpload: {
+                    // The URL that the images are uploaded to.
+                    uploadUrl: '/FileManager/SimpleUpload/@Model.ArticleNumber',
+                    // Enable the XMLHttpRequest.withCredentials property.
+                    withCredentials: true
+                },
+                heading: {
+                    options: [
+                        { model: 'paragraph', title: 'Paragraph' },
+                        { model: 'heading1', view: 'h1', title: 'Page Title' },
+                        { model: 'heading2', view: 'h2', title: 'Heading 1' },
+                        { model: 'heading3', view: 'h3', title: 'Heading 2' },
+                        { model: 'heading4', view: 'h4', title: 'Heading 3' },
+                        { model: 'heading5', view: 'h5', title: 'Heading 4' },
+                        { model: 'heading6', view: 'h6', title: 'Heading 5' }
+                    ]
+                },
+                link: {
+                    decorators: {
+                        toggleDownloadable: {
+                            mode: 'manual',
+                            label: 'Downloadable',
+                            attributes: {
+                                download: 'file'
+                            }
+                        },
+                        openInNewTab: {
+                            mode: 'manual',
+                            label: 'Open in a new tab',
+                            defaultValue: '_self',
+                            attributes: {
+                                target: '_self'
+                            }
+                        },
+                        btnClass: {
+                            model: 'manual',
+                            label: 'CSS class',
+                            attributes: {
+                                class: ''
+                            }
+                        }
+                    }
+                }
+            };
+
+            Array.from(inlineInjectElements).forEach(inlineElement => {
+
+                // Define a callback that will create an editor instance and return it.
+                watchdog.setCreator((elementOrData, editorConfig) => {
+                    return Editor
+                        .create(elementOrData, editorConfig)
+                        .then(editor => {
+                            
+                            const imageUploadEditing = editor.plugins.get('ImageUploadEditing');
+
+                            imageUploadEditing.on('uploadComplete', (evt, { data, imageElement }) => {
+                                parent.ccms_setBannerImage(data.url);
+                            });
+                            window.editor = editor;
+                            ccms_editors.push(editor);
+                            return parent.cosmosSignalOthers(editor, "join");
+                        })
+                });
+
+                watchdog.create(inlineElement, config);
+            });
+
+            parent.signalRConnection.invoke("JoinArticleGroup", "@Model.Id.ToString()");
+
+        }// End createEditors
+
+        window.addEventListener("click", function () {
+            parent.closeDropDowns();
+        });
+
+        window.addEventListener("keydown", (event) => {
+            if (event.isComposing || event.keyCode === 229) {
+                return;
+            }
+
+            // Handle CTRL-S to save changes
+            if (event.ctrlKey || event.metaKey) {
+                switch (String.fromCharCode(event.which).toLowerCase()) {
+                    case 's':
+                        event.preventDefault();
+
+                        parent.saving();
+
+                        const savePromise = parent.saveChanges(null, null);
+                        savePromise.then((value) => {
+                            parent.doneSaving();
+                        });
+
+                        break;
+                }
+            }
+        });
+
+
+    </script>
+
+    <script src="@Html.Raw("https://unpkg.com/@popperjs/core@2")"></script>
+    <script src="@Html.Raw("https://unpkg.com/tippy.js@6")"></script>
+    <script>
+        const elements = document.querySelectorAll('[data-ccms-ceid]');
+        elements.forEach(function (el, index) {
+            el.setAttribute("data-tippy-content", "Editable.")
+        });
+
+        // NodeList
+        var __cwps__toolTips = tippy(elements, {
+            placement: "right-start",
+            inlinePositioning: true,
+        }); //data-ccms-ceid
+    </script>
+</body>
+</html>

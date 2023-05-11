@@ -1,0 +1,127 @@
+﻿@model List<IdentityRole>
+@using Microsoft.AspNetCore.Identity
+@{
+    var userIds = (string[])ViewData["UserIds"];
+
+    ViewData["Title"] = "Role Inventory";
+
+    var rowCount = (int)ViewData["RowCount"];
+    var sortOrder = (string)ViewData["sortOrder"];
+    var currentSort = (string)ViewData["currentSort"];
+    var pageNumber = (int)ViewData["pageNo"];
+    var pageSize = (int)ViewData["pageSize"];
+
+    var pagerModel = new GridPagerPartialViewModel(pageNumber, rowCount, pageSize, sortOrder, currentSort, "/Editor/Index");
+}
+<div class="pt-3">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h3 class="text-light">@ViewData["Title"]</h3>
+                <hr />
+            </div>
+        </div>
+        @if (Model != null && Model.Any())
+        {
+            <div class="row bg-dark">
+                <div class="col-md-6">
+                    <div class="btn-group" role="group" aria-label="Page Actions">
+                        <p>@Model.Count() users selected.</p>
+                        <button type="button" id="btnAddToRoles" class="btn btn-sm btn-primary" style="display:none;color: #e6ccff">Add Selected Users to Roles</button>
+                        <button type="button" id="btnRemoveFromRoles" class="btn btn-sm btn-primary" style="display:none">Remove Selected Users from Roles</button>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex justify-content-end">
+                    <partial name="~/Views/Shared/GridPager/_GridPager.cshtml" model="pagerModel"></partial>
+                </div>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive custom-table-responsive">
+                    <table class="table custom-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    Select
+                                </th>
+                                <th scope="col">
+                                    Role Name
+                                </th>
+                                <th scope="col">
+
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type='checkbox' data-ccms-userid='@row.Id' class='gridCheckBox'>
+                                    </td>
+                                    <td>
+                                        @row.Name
+                                    </td>
+                                    <td style="width:30px;">
+                                        <button title='Manage membership.' type='button' onclick="manageUsers('@row.Id')" class='btn btn-sm'><i class='fa fa-user'></i></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row bg-dark">
+            <div class="col-md-12 d-flex justify-content-center">
+                <partial name="~/Views/Shared/GridPager/_GridPager.cshtml" model="pagerModel"></partial>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var selectedIds;
+    function error_handler(e) {
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors,
+                function (key, value) {
+                    if ('errors' in value) {
+                        $.each(value.errors,
+                            function () {
+                                message += this + "\n";
+                            });
+                    }
+                });
+            alert(message);
+        }
+    }
+
+    function onEdit(e) {
+        $("#spanChangeNotice").show();
+    }
+
+    function onChange(arg) {
+        selectedIds = this.selectedKeyNames(); //.join(", ");
+        if (selectedIds.length > 0) {
+            $("#btnAddToRoles").show();
+            $("#btnRemoveFromRoles").show();
+        } else {
+            $("#btnAddToRoles").hide();
+            $("#btnRemoveFromRoles").hide();
+        }
+    }
+
+    function manageUsers(roleId) {
+        window.location = "@Url.Action("UsersInRole")/" + roleId;
+    }
+
+    $(document).ready(function () {
+
+        $("body").addClass("cwps-editor-container");
+
+    });
+</script>

@@ -1,0 +1,118 @@
+﻿@page
+@using Cosmos.Cms.Common.Services.Configurations
+@using Microsoft.Extensions.Options
+@model LoginModel
+@inject IOptions<AuthenticationConfig> AuthConfig
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="card-group">
+            @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+            {
+                <div class="card bg-secondary text-light">
+                    <div class="card-header">
+                        <h3 class="card-title">Login:</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Note: This option allows you to log in using your existing work, school or personal account.</p>
+                        <p>Click the provider below to login.</p>
+                        <br />
+                        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                            <div>
+                                <p>
+                                    @foreach (var provider in Model.ExternalLogins)
+                                    {
+                                        @if (provider.Name == "Facebook")
+                                        {
+                                            <button type="submit" class="btn btn-outline-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
+                                                <img height="35" alt="Facebook Login Icon" src="~/lib/images/facebook.png" /> @provider.DisplayName
+                                            </button>
+                                        }
+                                        else if (provider.Name == "Google")
+                                        {
+                                            <button type="submit" class="btn btn-dark" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
+                                                <img height="35" alt="Google Login Icon" src="~/lib/images/img_login_google2.2x.png" /> @provider.DisplayName
+                                            </button>
+                                        }
+                                        else if (provider.Name == "Microsoft")
+                                        {
+                                            <button type="submit" class="btn btn-dark" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
+                                                <img height="35" alt="Microsoft Login Icon" src="~/lib/images/img_login_microsoft2.2x.png" /> @provider.DisplayName
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-dark" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                        }
+                                    }
+                                </p>
+                            </div>
+                        </form>
+                        <div>
+                            <p>
+                                <a class="text-light" asp-area="Identity" asp-page="/Account/Register">Need an account? Click here to register using either of the above.</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (AuthConfig.Value.AllowLocalRegistration.HasValue ? AuthConfig.Value.AllowLocalRegistration.Value : false)
+            {
+                <div class="card bg-secondary text-light">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            Login with Cosmos
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        @if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                        {
+                            <p>Note: This option allows you to login with an account that exists here, and no where else.</p>
+                        }
+                        <section>
+                            <form id="account" method="post">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                                <div class="form-group">
+                                    <label asp-for="Input.Email"></label>
+                                    <input asp-for="Input.Email" class="form-control" />
+                                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Input.Password"></label>
+                                    <input asp-for="Input.Password" class="form-control" />
+                                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <div class="checkbox">
+                                        <label asp-for="Input.RememberMe">
+                                            <input asp-for="Input.RememberMe" />
+                                            @Html.DisplayNameFor(m => m.Input.RememberMe)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-dark">Log in</button>
+                                </div>
+
+                                <p>
+                                    <a id="forgot-password" class="text-light" asp-page="./ForgotPassword">Forgot your password?</a>
+                                    |
+                                    <a asp-page="./Register" class="text-light" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+                                    |
+                                    <a id="resend-confirmation" class="text-light" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                                </p>
+                            </form>
+                        </section>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

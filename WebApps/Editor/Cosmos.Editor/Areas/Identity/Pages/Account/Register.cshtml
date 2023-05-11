@@ -1,0 +1,132 @@
+﻿@page
+@using Cosmos.Cms.Common.Services.Configurations
+@using Microsoft.Extensions.Options
+@model RegisterModel
+@inject IOptions<AuthenticationConfig> AuthConfig
+@{
+    ViewData["Title"] = "Register";
+    Html.ViewContext.ViewBag.BrowserTitle = "Register";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="card-group">
+            @if ((Model.ExternalLogins?.Count ?? 0) == 0)
+            {
+                <div>
+                    @*<p>
+                There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
+                for details on setting up this ASP.NET application to support logging in via external services.
+                </p>*@
+                </div>
+            }
+            else
+            {
+                <div class="card bg-secondary text-light">
+                    <div class="card-header">
+                        <h4 class="card-title">
+                            Register here:
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <section>
+                            @{
+                                if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                                {
+                                    <div>
+                                        @*<p>
+                            There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
+                            for details on setting up this ASP.NET application to support logging in via external services.
+                            </p>*@
+                                    </div>
+                                }
+                                else
+                                {
+                                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                                        <p>
+                                            Note: This option allows you to register using one of your existing work, school or personal accounts.
+                                            This can be most convenient option.
+                                        </p>
+
+                                        <div style="margin-bottom: 30px; margin-top: 30px;">
+                                            @foreach (var provider in Model.ExternalLogins)
+                                            {
+                                                @if (provider.Name == "Facebook")
+                                                {
+                                                    <button type="submit" class="btn btn-dark" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
+                                                        <img height="35" alt="Facebook Login Icon" src="~/lib/images/facebook.png" /> @provider.DisplayName
+                                                    </button>
+                                                }
+                                                else if (provider.Name == "Google")
+                                                {
+                                                    <button type="submit" class="btn btn btn-dark" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
+                                                        <img height="35" alt="Google Login Icon" src="~/lib/images/img_login_google2.2x.png" /> @provider.DisplayName
+                                                    </button>
+                                                }
+                                                else if (provider.Name == "Microsoft")
+                                                {
+                                                    <button type="submit" class="btn btn btn-dark" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
+                                                        <img height="35" alt="Microsoft Login Icon" src="~/lib/images/img_login_microsoft2.2x.png" /> @provider.DisplayName
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="submit" class="btn btn-dark" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                                }
+                                            }
+
+
+                                        </div>
+                                        <p>
+                                            Please remember the provider you register with. For example, if
+                                            you register with Google, then login with Google.
+                                        </p>
+                                    </form>
+                                }
+                            }
+                        </section>
+                    </div>
+                </div>
+            }
+            <div class="card bg-secondary text-light">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            Register with Cosmos
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        @if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                        {
+                            <p>
+                                If you do not have one of the accounts shown at left, or, you prefer to have an account
+                                on this website that exists no where else, register here.
+                            </p>
+                        }
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                            <div class="form-group">
+                                <label asp-for="Input.Email"></label>
+                                <input asp-for="Input.Email" class="form-control" />
+                                <span asp-validation-for="Input.Email" class="badge badge-primary"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Input.Password"></label>
+                                <input asp-for="Input.Password" class="form-control" />
+                                <span asp-validation-for="Input.Password" class="badge badge-primary"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Input.ConfirmPassword"></label>
+                                <input asp-for="Input.ConfirmPassword" class="form-control" />
+                                <span asp-validation-for="Input.ConfirmPassword" class="badge badge-primary"></span>
+                            </div>
+                            <button type="submit" class="btn btn-dark">Register</button>
+                        </form>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

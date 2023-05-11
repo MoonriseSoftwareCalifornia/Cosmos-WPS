@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <AssemblyVersion>7.4.7.20</AssemblyVersion>
+    <FileVersion>7.4.7.20</FileVersion>
+    <Version>7.2.2</Version>
+    <Title>Azure Blob and Amazon S3 Storage Provider</Title>
+    <Authors>toiyabe62</Authors>
+    <Company>Cosmos Software LLC</Company>
+    <Description>Manages BLOB objects in Azure and AWS. Also includes support for Azure File Share API.</Description>
+    <Copyright>Cosmos Software LLC</Copyright>
+    <PackageProjectUrl>https://www.moonrise.net</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageIcon></PackageIcon>
+    <PackageReleaseNotes>Adding support for Azure File Share API</PackageReleaseNotes>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="nuget.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="3.7.103.25" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.15.0" />
+    <PackageReference Include="Azure.Storage.Files.Shares" Version="12.13.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="_res\icons\nuget-icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

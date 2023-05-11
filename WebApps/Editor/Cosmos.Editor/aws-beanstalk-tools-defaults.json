@@ -1,0 +1,20 @@
+
+{
+    "region" : "us-west-1",
+    "configuration" : "Debug",
+    "framework"     : "net5.0",
+    "self-contained" : false,
+    "application"    : "CDTCosmosCms",
+    "environment"    : "c19-cosmos-editor",
+    "enable-xray"    : false,
+    "enhanced-health-type" : "basic",
+    "additional-options"   : "\"aws:autoscaling:launchconfiguration,SecurityGroups\"=\"sg-01c265931c5fe6c0b\";\"aws:ec2:vpc,Subnets\"=\"subnet-0f8e20f6c43837c63,subnet-02d0ca7336ef206c8\"",
+    "solution-stack"       : "64bit Amazon Linux 2 v2.2.4 running .NET Core",
+    "environment-type"     : "SingleInstance",
+    "cname"                : "c19-cosmos-editor-2",
+    "instance-type"        : "t3a.medium",
+    "key-pair"             : "ubuntu",
+    "instance-profile"     : "aws-elasticbeanstalk-ec2-role",
+    "service-role"         : "aws-elasticbeanstalk-service-role",
+    "proxy-server"         : "nginx"
+}

@@ -1,0 +1,71 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Deterministic>true</Deterministic>
+		<TargetFrameworks>net7.0</TargetFrameworks>
+		<Authors>toiyabe62</Authors>
+		<Company>Moonrise Software LLC</Company>
+		<Product>Cosmos CMS</Product>
+		<Description>This package contains all the common methods and objects used by the Cosmos CMS editor website, and by any website service the role of a publishing website.</Description>
+		<Copyright>Eric Kauffman</Copyright>
+		<RepositoryType>Class Library</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<SignAssembly>false</SignAssembly>
+		<AnalysisLevel>5.0</AnalysisLevel>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<Version>7.4.11.1</Version>
+		<AssemblyVersion>7.4.11.1</AssemblyVersion>
+		<FileVersion>7.4.11.1</FileVersion>
+		<UserSecretsId>498e495c-d772-4d44-870d-92009f01de57</UserSecretsId>
+		<PackageProjectUrl>https://www.cosmoswps.com</PackageProjectUrl>
+		<NeutralLanguage></NeutralLanguage>
+		<PackageTags>CCMS</PackageTags>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<PackageReleaseNotes>Code cleanup, NuGet update</PackageReleaseNotes>
+		<RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+
+		<!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+		<!-- Embed source files that are not tracked by the source control manager in the PDB -->
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+		<!-- Recommended: Embed symbols containing Source Link in the main file (exe/dll) -->
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<DisableImplicitAspNetCoreAnalyzers>true</DisableImplicitAspNetCoreAnalyzers>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<WarningLevel>3</WarningLevel>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<DefineConstants>TRACE</DefineConstants>
+		<WarningLevel>0</WarningLevel>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="nuget.config" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AspNetCore.Identity.CosmosDb" Version="2.1.4" />
+		<PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="7.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
+	</ItemGroup>
+
+
+</Project>

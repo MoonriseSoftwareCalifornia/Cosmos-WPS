@@ -1,0 +1,207 @@
+﻿@model CreatePageViewModel
+
+@{
+    ViewData["Title"] = "Create";
+    var templateList = (List<TemplateIndexViewModel>)ViewData["TemplateList"];
+
+    var rowCount = (int)ViewData["RowCount"];
+    var sortOrder = (string)ViewData["sortOrder"];
+    var currentSort = (string)ViewData["currentSort"];
+    var pageNumber = (int)ViewData["pageNo"];
+    var pageSize = (int)ViewData["pageSize"];
+
+    var pagerModel = new GridPagerPartialViewModel(pageNumber, rowCount, pageSize, sortOrder, currentSort, "/Editor/Create");
+}
+<div class="cwps-editor-container pt-3">
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 text-light">
+            <h3>Create a Page</h3>
+            <form id="frmCreate" asp-action="Create">
+                <input asp-for="Id" type="hidden" />
+                <input asp-for="TemplateId" type="hidden" />
+                <input asp-for="ArticleNumber" type="hidden" />
+
+                <div asp-validation-summary="ModelOnly" class="text-light"></div>
+
+                <div class="form-group mb-3">
+                    <label class="control-label">URL: /</label>
+                    <input class="form-control" autocomplete="off" asp-for="Title" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <h4 id="lblSelectedTemplate"></h4>
+                </div>
+
+                <div class="form-group">
+                    <button type="button" id="previewBtn" style="display:none" class="btn btn-primary" onclick="openPreview()">Full Page Preview</button>
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+            <br />
+            <h5>Create page using a page template (optionally select one):</h5>
+        </div>
+    </div>
+    <div class="row bg-dark">
+        <div class="col-md-6">
+            <div class="btn-group" role="group" aria-label="Actions">
+                <a target="_blank" title="Return to page list" class="btn btn-sm btn-primary" href="@Url.Action("Create", "Templates")">Create new template <i class="fa-solid fa-circle-arrow-right"></i></a>
+            </div>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+            <partial name="~/Views/Shared/GridPager/_GridPager.cshtml" model="pagerModel"></partial>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive custom-table-responsive">
+                <table class="table custom-table">
+                    <thead>
+                        <tr scope="col">
+                            <th scope="col">
+                                Select
+                            </th>
+                            <th scope="col" style="min-width:200px;">Action</th>
+                            <th scope="col" style="min-width:200px;">Edit With</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Trash</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in templateList)
+                        {
+                            <tr scope="row">
+                                <td scope="row" style="width:30px;">
+                                    <div class="form-check form-switch">
+                                        @if (Model.TemplateId == row.Id)
+                                        {
+                                            <input type='checkbox' class="form-check-input gridCheckBox" data-ccms-tid='@row.Id' data-ccms-ttitle="@row.Title" checked>
+                                        }
+                                        else
+                                        {
+                                            <input type='checkbox' class="form-check-input gridCheckBox" data-ccms-tid='@row.Id' data-ccms-ttitle="@row.Title">
+                                        }
+                                    </div>
+                                </td>
+                                <td scope="row">
+                                    <div class="btn-group" role="group" aria-label="Actions for this template">
+                                        <a target="_blank" class="btn btn-sm btn-secondary" href="@Url.Action("Preview", "Templates", new { Id = row.Id })" title="Preview"><span class="fa fa-binoculars"></span> Preview</a>
+                                        <a target="_blank" class="btn btn-sm btn-secondary" href="@Url.Action("EditCode", "Templates", new { Id = row.Id })" title="Code editor"><img src="/images/monaco-vscode-logo.png" height="22" /> Edit</a>
+                                    </div>
+                                </td>
+                                <td scope="row">
+                                    <span class="me-2" title="Creates a page that is editable with the code editor">
+                                        <img src="/images/monaco-vscode-logo.png" height="20" /> Code
+                                    </span>
+
+                                    @if (row.UsesHtmlEditor)
+                                    {
+                                        <span title="Creates a page that is editable with the live (WYSIWYG) editor">
+                                            <img src="/images/ckeditor-5-proj-logo.svg" height="22" /> Live
+                                        </span>
+                                    }
+                                </td>
+                                <td scope="row">
+                                    @row.Title
+                                </td>
+                                <td scope="row">
+                                    @Html.Raw(row.Description)
+                                </td>
+                                <td scope="row">
+                                    <button type='button' onclick="selectId('@row.Id')" class='btn btn-sm btn-secondary' data-bs-toggle='modal' data-bs-target='#delConfModal'><i title='Send to trash' class='fa-solid fa-trash'></i></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row bg-dark">
+        <div class="col-md-12 d-flex justify-content-center">
+            <partial name="~/Views/Shared/GridPager/_GridPager.cshtml" model="pagerModel"></partial>
+        </div>
+    </div>
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+</div>
+</div>
+<script>
+    let sessionTitle;
+
+    $("#frmCreate").submit(function (e) {
+        sessionStorage.setItem("sessionTitle", "");
+        sessionStorage.setItem("templateId", "");
+        return true;
+    });
+
+    $(document).ready(function () {
+        if ("@Model.Title" === "") {
+            sessionTitle = sessionStorage.getItem("sessionTitle");
+            $("#Title").val(sessionTitle);
+        } else {
+            $("#Title").val("@Model.Title");
+            sessionStorage.setItem("sessionTitle", "@Model.Title");
+            sessionTitle = "@Model.Title";
+        }
+
+        var template = getTemplate();
+
+        if (template !== null && template !== "") {
+            $(".gridCheckBox").each(function (index, cbox) {
+                if ($(cbox).attr('data-ccms-tid') === template.Id) {
+                    $(cbox).prop('checked', true);
+                    $("#lblSelectedTemplate").html("Template: " + template.Title);
+                    $("#TemplateId").val(template.Id);
+                }
+            });
+        }
+    });
+
+    $(".gridCheckBox").on("change", function () {
+
+        const templateId = $(this).attr('data-ccms-tid');
+        const isChecked = $(this).prop('checked');
+        setTemplate("");
+
+        $(".gridCheckBox").each(function (index, cbox) {
+            $(cbox).prop('checked', false);
+            if ($(cbox).attr('data-ccms-tid') === templateId) {
+                if (isChecked) {
+                    setTemplate({ Id: $(cbox).attr('data-ccms-tid'), Title: $(cbox).attr('data-ccms-ttitle') });
+                }
+                $(cbox).prop('checked', isChecked);
+            }
+        });
+    });
+
+    $("#Title").change(function () {
+        sessionStorage.setItem("sessionTitle", $("#Title").val());
+    });
+
+    function setTemplate(data) {
+        if (data === "") {
+            $("#lblSelectedTemplate").html("");
+            $("#TemplateId").val("");
+        } else {
+            $("#lblSelectedTemplate").html("Template: " + data.Title);
+            $("#TemplateId").val(data.Id);
+        }
+        sessionStorage.setItem("templateId", JSON.stringify(data));
+    }
+
+    function getTemplate() {
+        var data = sessionStorage.getItem("templateId");
+        if (data === "") {
+            return "";
+        }
+        return JSON.parse(data);
+    }
+</script>
+@{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
