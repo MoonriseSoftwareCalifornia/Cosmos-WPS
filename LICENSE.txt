@@ -5,7 +5,7 @@
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 
- Note: For a schedule of intellectual property included in Cosmos WPS, see <LICENSE.md>.
+ Note: For a schedule of intellectual property included in Cosmos WPS, see <SLA.md>.
 
                             Preamble
 
